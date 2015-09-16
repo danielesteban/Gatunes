@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="msapplication-tap-highlight" content="no">
+		<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+		<link rel="shortcut icon" href="favicon.png" type="image/png" />
+		<link rel="stylesheet" type="text/css" href="css/screen.css">
+		<title>Gatunes</title>
+	</head>
+	<body>
+		<main class="container">
+			<background><img src="img/01discover.jpg"></background>
+			<wrapper>
+				<logo></logo>
+				<h1>Free music, No bullshit.</h1>
+				<p>
+					<a href="https://github.com/danielesteban/Gatunes/releases/download/v0.0.9/GatunesWin.zip" class="btn">
+						<i class="fa fa-windows"></i>Download Beta 0.0.9
+					</a>
+					<platform>
+						<span>For 64-bit Windows 7 and above</span> | <a href="#platforms">Other platforms</a>
+					</platform>
+				</p>
+			</wrapper>
+		</main>
+		<warning class="container">
+			<h4>Gatunes downloads Music from torrents</h4>
+			<p>
+				Downloading copyrighted material may be illegal in your country. Use at your own risk.
+			</p>
+		</warning>
+		<platforms class="container">
+			<a name="platforms"></a>
+			<div>
+				<a href="https://github.com/danielesteban/Gatunes/releases/download/v0.0.9/GatunesWin.zip" class="btn">
+					<i class="fa fa-windows"></i>Download Beta 0.0.9
+				</a>
+				<platform>
+					For 64-bit Windows 7 and above
+				</platform>
+			</div>
+			<div>
+				<a href="https://github.com/danielesteban/Gatunes/releases/download/v0.0.9/GatunesWin32.zip" class="btn">
+					<i class="fa fa-windows"></i>Download Beta 0.0.9
+				</a>
+				<platform>
+					For 32-bit Windows 7 and above
+				</platform>
+			</div>
+			<div>
+				<a href="https://github.com/danielesteban/Gatunes/releases/download/v0.0.9/GatunesMac.zip" class="btn">
+					<i class="fa fa-apple"></i>Download Beta 0.0.9
+				</a>
+				<platform>
+					For 64-bit Mac OSX 10.9 and above
+				</platform>
+			</div>
+			<div>
+				<a href="https://github.com/danielesteban/Gatunes/releases/download/v0.0.9/GatunesLinux.zip" class="btn">
+					<i class="fa fa-linux"></i>Download Beta 0.0.9
+				</a>
+				<platform>
+					For 64-bit Linux
+				</platform>
+			</div>
+			<div>
+				<a href="https://github.com/danielesteban/Gatunes/releases/download/v0.0.9/GatunesLinux32.zip" class="btn">
+					<i class="fa fa-linux"></i>Download Beta 0.0.9
+				</a>
+				<platform>
+					For 32-bit Linux
+				</platform>
+			</div>
+		</platforms>
+	</body>
+	<script>
+		var main = document.getElementsByTagName('main')[0],
+			background = main.getElementsByTagName('background')[0],
+			mainLink = main.getElementsByTagName('a')[0],
+			mainPlatform = main.getElementsByTagName('platform')[0].getElementsByTagName('span')[0],
+			version = navigator.appVersion,
+			platforms = document.getElementsByTagName('div'),
+			platform = 0;
+
+		version.indexOf("Mac") !== -1 && (platform = 2);
+		(version.indexOf("X11") !== -1 || version.indexOf("Linux") !== -1) && (platform = 3);
+
+		mainLink.href = platforms[platform].getElementsByTagName('a')[0].href;
+		mainLink.getElementsByTagName('i')[0].className = platforms[platform].getElementsByTagName('i')[0].className;
+
+		mainPlatform.innerHTML = platforms[platform].getElementsByTagName('platform')[0].innerHTML;
+
+		var files = [
+				'01discover',
+				'02artist',
+				'03download',
+				'04quickbrowse',
+				'05music'
+			],
+			images = [],
+			animation = 0,
+			image = 0,
+			start = Math.round(new Date() / 1000),
+			preload = function() {
+				var file = files.shift();
+				if(!file) return setTimeout(animate, Math.max(0, 4000 - (Math.round(new Date() / 1000) - start)));
+				var img = new Image();
+				img.onload = function() {
+					images.push(img);
+					preload();
+				};
+				img.src = 'img/' + file + '.jpg';
+			},
+			timer,
+			animate = function() {
+				var timeout = 1000;
+				switch(animation) {
+					case 0:
+						background.className = 'transition';
+					break;
+					case 1:
+						++image >= images.length && (image = 0);
+						background.firstChild.src = images[image].src;
+						background.className = '';
+						timeout = 4000;
+					break;
+				}
+				++animation >= 2 && (animation = 0);
+				timer && clearTimeout(timer);
+				timer = setTimeout(animate, timeout);
+			};
+
+		preload();
+	</script>
+</html>
