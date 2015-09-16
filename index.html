@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="msapplication-tap-highlight" content="no">
+		<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+		<link rel="stylesheet" type="text/css" href="css/screen.css">
+		<title>Gatunes</title>
+	</head>
+	<body>
+		<main class="container">
+			<logo></logo>
+			<h1>Free music, No bullshit.</h1>
+			<p id="mainLink">
+				<a href="GatunesWin.zip" class="btn" target="_blank">
+					<i class="fa fa-windows"></i>Download Beta 0.0.6
+				</a>
+				<platform>
+					<span id="mainPlatform">For Windows 7 and above</span> | <a href="#platforms">Other platforms</a>
+				</platform>
+			</p>
+		</main>
+		<warning class="container">
+			<h4>Gatunes downloads Music from torrents</h4>
+			<p>
+				Downloading copyrighted material may be illegal in your country. Use at your own risk.
+			</p>
+		</warning>
+		<platforms class="container">
+			<a name="platforms"></a>
+			<div>
+				<a href="GatunesWin.zip" class="btn" target="_blank">
+					<i class="fa fa-windows"></i>Download Beta 0.0.6
+				</a>
+				<platform>
+					For Windows 7 and above
+				</platform>
+			</div>
+			<div>
+				<a href="GatunesMac.zip" class="btn" target="_blank">
+					<i class="fa fa-apple"></i>Download Beta 0.0.6
+				</a>
+				<platform>
+					For Mac OSX 10.7 and above
+				</platform>
+			</div>
+			<div>
+				<a href="GatunesLinux.zip" class="btn" target="_blank">
+					<i class="fa fa-linux"></i>Download Beta 0.0.6
+				</a>
+				<platform>
+					For 64-bit Linux
+				</platform>
+			</div>
+		</platforms>
+	</body>
+	<script>
+		var mainLink = document.getElementById('mainLink'),
+			mainPlatform = document.getElementById('mainPlatform'),
+			version = navigator.appVersion,
+			platforms = document.getElementsByTagName('div'),
+			platform = 0;
+
+		version.indexOf("Mac") !== -1 && (platform = 1);
+		(version.indexOf("X11") !== -1 || version.indexOf("Linux") !== -1) && (platform = 2);
+
+		mainLink.href = platforms[platform].getElementsByTagName('a')[0].href;
+		mainLink.getElementsByTagName('i')[0].className = platforms[platform].getElementsByTagName('i')[0].className;
+
+		mainPlatform.innerHTML = platforms[platform].getElementsByTagName('platform')[0].innerHTML;
+	</script>
+</html>
