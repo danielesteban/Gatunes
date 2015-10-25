@@ -1,0 +1,16 @@
+<spinner ng-if="loading"></spinner>
+<div class="centered clearfix" ng-if="!loading">
+	<artist class="tileable clearfix" ng-repeat="artist in artists">
+		<a href="#/artist/{{artist.name}}">
+			<img ng-src="{{artist.picture}}">
+		</a>
+		<div class="info">
+			<h3>
+				{{artist.name}}
+			</h3>
+		</div>
+	</artist>
+	<div class="more" ng-if="baseurl &amp;&amp; more">
+		<a href="#/{{baseurl}}/{{page + 2}}">{{i18n.more}} <i class="fa fa-chevron-right"></i></a>
+	</div>
+</div>

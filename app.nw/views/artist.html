@@ -1,0 +1,25 @@
+<artist class="clearfix">
+	<img ng-src="{{artist.picture}}">
+	<div class="info">
+		<h3>
+			{{artist.name}}
+		</h3>
+		<p>
+			{{artist.bio}}
+		</p>
+	</div>
+</artist>
+<tabs class="clearfix">
+	<li ng-class="{active: view === 'downloads'}">
+		<a ng-click="view = 'downloads'">
+			<i class="fa fa-download"></i> {{i18n.downloads}}
+		</a>
+	</li>
+	<li ng-class="{active: view === 'similar'}">
+		<a ng-click="view = 'similar'">
+			<i class="fa fa-user"></i> {{i18n.similarArtists}}
+		</a>
+	</li>
+</tabs>
+<torrents ng-if="view === 'downloads'" data-query="artist.name"></torrents>
+<artists ng-if="view === 'similar'" data-similar="artist.name"></torrents>

@@ -1,0 +1,24 @@
+<playlist draggable="playlist">
+	<h3 ng-click="renaming=true">
+		<a class="action" ng-click="remove($event)" ng-hide="renaming">
+			<i class="fa fa-fw fa-times"></i>
+		</a>
+		<span ng-hide="renaming">{{playlist.title}}</span>
+		<form ng-submit="rename()">
+			<input type="text" name="title" ng-show="renaming" ng-model="playlist.title" ng-blur="cancelRename()" focusandselect required>
+		</form>
+	</h3>
+	<div class="track clearfix ng-class:{playing: player.track === track, selected: selected[track.id]}" ng-dblclick="play(track)" drag="track" data-drop='{"type": "track", "id": "{{track.id}}"}' ng-repeat="track in playlist.tracks">
+		<div class="num">
+			<span>{{$index + 1 | addzero}}</span>
+			<i class="fa fa-fw fa-volume-up"></i>
+		</div>
+		<div class="title">
+			{{track.title}}
+		</div>
+		<div class="duration" ng-if="track.duration">
+			{{track.duration | duration}}
+		</div>
+	</div>
+	<div class="lastdrop" data-drop='{"type": "track"}'></div>
+</playlist>

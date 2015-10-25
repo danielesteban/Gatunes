@@ -1,0 +1,22 @@
+<time ng-show="player.track &amp;&amp; (hover || dragging)">{{time | duration}}</time>
+<progress min="0" max="{{player.track.duration || player.audio.duration}}" value="{{player.currentTime}}"></progress>
+<div class="wrapper">
+	<button ng-click="player.pause()" ng-disabled="!player.track">
+		<i class="fa fa-fw ng-class:{'fa-play': player.audio.paused, 'fa-pause': !player.audio.paused}"></i>
+	</button>
+	<button ng-click="player.prev()" ng-disabled="!player.prevTrack">
+		<i class="fa fa-fw fa-backward"></i>
+	</button>
+	<button ng-click="player.next()" ng-disabled="!player.nextTrack">
+		<i class="fa fa-fw fa-forward"></i>
+	</button>
+	<button ng-click="player.toggleShuffle()">
+		<i class="fa fa-fw ng-class:{'fa-repeat': !player.shuffle, 'fa-random': player.shuffle}"></i>
+	</button>
+	<span class="track" ng-show="player.track">
+		{{player.track.album.artist.name}} - {{player.track.title}}
+	</span>
+	<small class="time">
+		{{player.currentTime | duration}} / {{player.track.duration || player.audio.duration | duration}}
+	</small>
+</div>

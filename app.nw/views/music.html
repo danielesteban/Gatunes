@@ -1,0 +1,45 @@
+<div draggable="tracks">
+	<div ng-repeat="artist in artists">
+		<artist class="clearfix">
+			<img ng-src="{{artist.picture}}">
+			<div class="info">
+				<h3>
+					<a href="#/artist/{{artist.name}}">{{artist.name}}</a>
+				</h3>
+				<p>
+					{{artist.bio}}
+				</p>
+			</div>
+		</artist>
+		<album ng-repeat="album in artist.albums">
+			<h3>
+				{{album.title}}
+			</h3>
+			<div class="track clearfix ng-class:{playing: player.track === track, selected: selected[track.id]}" ng-dblclick="play(track)" drag="track" ng-repeat="track in album.tracks">
+				<div class="num">
+					<span>{{$index + 1 | addzero}}</span>
+					<i class="fa fa-fw fa-volume-up"></i>
+				</div>
+				<div class="title">
+					{{track.title}}
+				</div>
+				<div class="duration" ng-if="track.duration">
+					{{track.duration | duration}}
+				</div>
+			</div>
+		</album>
+	</div>
+</div>
+<div class="noMusic" ng-if="!artists.length">
+	<div class="helper browse">
+		<arrow x="60" y="60" tox="10" toy="10"></arrow>
+		{{i18n.noMusicBrowse}}
+	</div>
+	<div class="helper search">
+		<arrow x="10" y="100" tox="10" toy="10"></arrow>
+		{{i18n.noMusicSearch}}
+	</div>
+	<div class="big">
+		{{i18n.noMusic}}
+	</div>
+</div>

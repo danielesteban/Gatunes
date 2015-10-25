@@ -1,0 +1,46 @@
+<a href="#/music" ng-class="{active: active === '/music'}">
+	<i class="fa fa-fw fa-music"></i>
+	{{i18n.music}}
+</a>
+<a ng-if="downloads.length" href="#/downloads" class="clearfix" ng-class="{active: active === '/downloads'}">
+	<span class="count">{{downloads.length}}</span>
+	<i class="fa fa-fw fa-download"></i>
+	{{i18n.downloads}}
+</a>
+<a href="#/browse" ng-class="{active: active === '/browse' || active.substr(0, 8) === '/artist/'}">
+	<i class="fa fa-fw fa-cloud"></i>
+	{{i18n.browse}}
+</a>
+
+<div ng-if="searches.length">
+	<h5>{{i18n.recentSearches}}</h5>
+	<a href="#/search/{{query}}" title="{{query}}" ng-class="{active: active === '/search/' + query}" ng-repeat="query in searches">
+		<i class="fa fa-fw fa-search"></i>
+		{{query}}
+	</a>
+</div>
+
+<div ng-show="tracks.length">
+	<h5>
+		<span class="action" ng-click="addingPlaylist=true" ng-hide="!playlists.length || addingPlaylist">
+			<i class="fa fa-fw fa-plus"></i>
+		</span>
+		{{i18n.playlists}}
+	</h5>
+	<form ng-submit="addPlaylist(playlistTitle)" ng-show="!playlists.length || addingPlaylist">
+		<a ng-click="addingPlaylist=true">
+			<i class="fa fa-fw fa-plus"></i>
+			<span ng-hide="addingPlaylist">{{i18n.addPlaylist}}</span>
+			<input ng-show="addingPlaylist" type="text" name="playlistTitle" ng-model="playlistTitle" ng-blur="cancelAddPlaylist()" focusandselect required>
+		</a>
+	</form>
+	<a href="#/playlist/{{playlist.id}}" ng-class="{active: active === '/playlist/' + playlist.id}" ng-repeat="playlist in playlists" data-drop='{"type": "playlist", "id": "{{playlist.id}}"}'>
+		<i class="fa fa-fw ng-class:{'fa-list': player.playlist.id !== playlist.id, 'fa-volume-up': player.playlist.id === playlist.id}"></i>
+		{{playlist.title}}
+	</a>	
+</div>
+
+<div class="trash" data-drop='{"type": "trash"}'>
+	<i class="fa fa-fw fa-trash"></i>
+	{{i18n.trash}}
+</div>

@@ -1,0 +1,25 @@
+<preferences>
+	<p>
+		<label>{{i18n.language}}</label><br>
+		<label>
+			<input type="radio" name="locale" ng-model="locale" value="en"> EN
+		</label>
+		<label>
+			<input type="radio" name="locale" ng-model="locale" value="es"> ES
+		</label>
+	</p>
+	<p>
+		<label>{{i18n.version}}</label><br>
+		v{{version}}
+	</p>
+	<p>
+		<label>{{i18n.storage}}</label><br>
+		<input type="text" name="storage" ng-model="storage" disabled>
+	</p>
+	<p>
+		<label>{{i18n.database}}</label><br>
+		<button ng-click="backup()">{{i18n.backupDB}}</button> &nbsp;
+		<button ng-click="restore()">{{i18n.restoreDB}}</button> &nbsp;
+		<button ng-click="reset()">{{i18n.resetDB}}</button>
+	</p>
+</preferences>

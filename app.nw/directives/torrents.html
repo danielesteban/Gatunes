@@ -1,0 +1,35 @@
+<spinner ng-if="loading"></spinner>
+<div ng-if="!loading">
+	<torrent ng-click="load(torrent)" ng-repeat="torrent in torrents">
+		<h4 class="clearfix">
+			<img ng-if="torrent.picture" class="picture" ng-src="{{torrent.picture}}">
+			<i class="fa fa-fw ng-class:{'fa-chevron-right': !torrent.files &amp;&amp; !torrent.loading, 'fa-chevron-down': torrent.files || torrent.loading}"></i>
+			{{torrent.title}}
+			<small>{{torrent.desc}}</small>
+		</h4>
+		<div ng-if="torrent.loading &amp;&amp; !torrent.files">
+			{{i18n.fetchingMetadata}}...
+		</div>
+		<div ng-if="torrent.files">
+			<label ng-if="!torrent.downloading" ng-repeat="file in torrent.files">
+				<input type="checkbox" ng-model="file.selected">{{file.filename}} <small>{{file.length | bytes}}</small>
+			</label>
+			<div ng-if="torrent.downloading &amp;&amp; file.selected" ng-repeat="file in torrent.files" class="clearfix">
+				<pieces data-pieces="file.pieces" data-done="file.done"></pieces>
+				{{file.filename}} <small>{{file.length | bytes}}</small>
+			</div>
+			<div ng-if="!torrent.files.length">
+				{{i18n.noSupportedFiles}}
+			</div>
+			<button ng-if="torrent.files.length &amp;&amp; !torrent.downloading" ng-click="download(torrent)">
+				<i class="fa fa-download"></i> {{i18n.download}}
+			</button>
+			<button ng-if="torrent.files.length &amp;&amp; torrent.downloading" ng-click="remove(torrent)">
+				<i class="fa fa-times"></i> {{i18n.cancelDownload}}
+			</button>
+		</div>
+	</torrent>
+	<div class="more" ng-if="baseurl &amp;&amp; more">
+		<a href="#/{{baseurl}}/{{page + 1}}">{{i18n.more}} <i class="fa fa-chevron-right"></i></a>
+	</div>
+</div>

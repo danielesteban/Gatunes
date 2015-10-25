@@ -1,0 +1,28 @@
+<div class="window">
+	<a ng-click="quit()">
+		<i class="fa fa-fw fa-times"></i>
+	</a>
+	<a ng-click="minimize()">
+		<i class="fa fa-fw fa-minus"></i>
+	</a>
+	<a ng-click="maximize()">
+		<i class="fa fa-fw fa-plus"></i>
+	</a>
+</div>
+<div class="history">
+	<button ng-disabled="historyIndex <= 0" ng-click="back()">
+		<i class="fa fa-fw fa-chevron-left"></i>
+	</button>
+	<button ng-disabled="historyIndex >= history.length - 1" ng-click="forward()">
+		<i class="fa fa-fw fa-chevron-right"></i>
+	</button>
+</div>
+<form class="search" name="search" ng-submit="search()">
+	<input ng-model="query" type="text" placeholder="{{i18n.searchTorrents}}">
+	<button>
+		<i class="fa fa-fw fa-search"></i>
+	</button>
+</form>
+<a href="#/preferences" class="preferences">
+	<i class="fa fa-fw fa-cog"></i>
+</a>
