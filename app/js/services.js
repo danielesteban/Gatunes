@@ -111,10 +111,6 @@ angular.module('Gatunes.services', [])
 			});
 		});
 
-		win.on('close', function() {
-			globalShortcut.unregisterAll();
-		});
-
 		this.on = function(event, callback) {
 			!callbacks[event] && (callbacks[event] = []);
 			callbacks[event].push(callback);
