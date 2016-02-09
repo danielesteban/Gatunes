@@ -24,6 +24,18 @@ angular.module('Gatunes', [
 	$routeProvider.otherwise({redirectTo: '/music'});
 })
 .run(function($rootScope, $location, $window, ngDialog, Autoupdater, i18n, Music, Torrents, Storage) {
+	var remote = require('remote'),
+		win = remote.getCurrentWindow();
+
+	win.on('close', function() {
+		win.hide();
+		Torrents.destroy(function() {
+			win.removeAllListeners('close');
+			win.close();
+			remote.app.quit();
+		});
+	});
+
 	if(!$window.localStorage.getItem('Gatunes:AcceptedTerms')) {
 		ngDialog.open({
 			template: 'dialogs/terms.html',

@@ -13,9 +13,8 @@ electron.app.on('ready', function() {
 		minHeight: 600
 	});
 	mainWindow.loadURL('file://' + __dirname + '/index.html');
+	mainWindow.on('close', function(e) {
+		e.preventDefault();
+	});
 });
 
-electron.app.on('window-all-closed', function() {
-	electron.globalShortcut.unregisterAll();
-	this.quit();
-});
