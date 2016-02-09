@@ -1,7 +1,9 @@
 <div draggable="tracks">
 	<div ng-repeat="artist in artists">
 		<artist class="clearfix">
-			<img ng-src="{{artist.picture}}">
+			<div class="image">
+				<img ng-src="{{artist.picture}}">
+			</div>
 			<div class="info">
 				<h3>
 					<a href="#/artist/{{artist.name}}">{{artist.name}}</a>

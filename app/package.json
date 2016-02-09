@@ -7,8 +7,6 @@
 		"sass": "sass --watch --sourcemap=none --style=compressed --scss css/screen.scss:css/screen.css"
 	},
 	"dependencies": {
-		"adm-zip": "^0.4.7",
-		"kickass-search": "0.0.8",
 		"musicmetadata": "^2.0.2",
 		"torrent-stream": "^1.0.2"
 	},

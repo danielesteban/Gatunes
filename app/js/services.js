@@ -12,7 +12,14 @@ angular.module('Gatunes.services', [])
 }())
 .factory('Autoupdater', function($http, ngDialog) {
 	//TODO: Replace this with the Electron's built-in AutoUpdater
-	var fs = require('fs'),
+	return {
+		currentVersion: '0.0.7',
+		run: function() {
+
+		}
+	};
+
+	/*var fs = require('fs'),
 		path = require('path'),
 		crypto = require('crypto'),
 		http = require('http'),
@@ -73,7 +80,7 @@ angular.module('Gatunes.services', [])
 				});
 			});
 		}
-	};
+	};*/
 })
 .factory('Keyboard', function($window) {
 	var Keyboard = function() {

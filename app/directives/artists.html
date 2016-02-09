@@ -1,7 +1,7 @@
 <spinner ng-if="loading"></spinner>
 <div class="centered clearfix" ng-if="!loading">
 	<artist class="tileable clearfix" ng-repeat="artist in artists">
-		<a href="#/artist/{{artist.name}}">
+		<a href="#/artist/{{artist.name}}" class="image">
 			<img ng-src="{{artist.picture}}">
 		</a>
 		<div class="info">
