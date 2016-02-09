@@ -212,7 +212,7 @@ angular.module('Gatunes.directives', [])
 							name: info.name
 						};
 
-					info.bio && info.bio.summary && (artist.bio = info.bio.summary.replace(/<[^>]*>/g, '').replace(/ Read more on Last\.fm\./g, ''));
+					info.bio && info.bio.summary && (artist.bio = info.bio.summary.replace(/<[^>]*>/g, '').replace(/ Read more on Last\.fm/g, ''));
 					info.image && info.image.length && (artist.picture = LastFm.getImage(info));
 					scope.artists.push(artist);
 				});

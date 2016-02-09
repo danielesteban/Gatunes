@@ -551,7 +551,7 @@ angular.module('Gatunes.services', [])
 		$window.localStorage.setItem('Gatunes:artist:' + name, '{}');
 		LastFm.getArtist(artist.name, function(info) {
 			var data = {};
-			info.bio && info.bio.summary && (artist.bio = data.bio = info.bio.summary.replace(/<[^>]*>/g, '').replace(/ Read more on Last\.fm\./g, ''));
+			info.bio && info.bio.summary && (artist.bio = data.bio = info.bio.summary.replace(/<[^>]*>/g, '').replace(/ Read more on Last\.fm/g, ''));
 			info.image && info.image.length && (artist.picture = data.picture = LastFm.getImage(info));
 			$window.localStorage.setItem('Gatunes:artist:' + name, JSON.stringify(data));
 		});
