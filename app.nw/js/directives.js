@@ -134,13 +134,13 @@ angular.module('Gatunes.directives', [])
 			var dragging = false,
 				time = element.find('time'),
 				setTime = function(x) {
-					Player.track && (scope.time = (Player.track.duration || Player.audio.duration) * (x / $window.innerWidth));
+					Player.track && (scope.time = Player.duration * (x / $window.innerWidth));
 					time.css('left', x + 'px');
 				},
 				mousemove = function(e) {
 					if(!Player.track) return;
 					setTime(e.clientX);
-					Player.audio.currentTime = (Player.track.duration || Player.audio.duration) * (e.clientX / $window.innerWidth);
+					Player.audio.seek(Player.duration * (e.clientX / $window.innerWidth));
 				},
 				mouseup = function() {
 					scope.dragging = false;

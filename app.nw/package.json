@@ -16,6 +16,7 @@
 	"dependencies": {
 		"adm-zip": "latest",
 		"musicmetadata": "latest",
-		"torrent-stream": "latest"
+		"torrent-stream": "latest",
+		"kickass-search": "latest"
 	}
 }

@@ -195,23 +195,77 @@ angular.module('Gatunes.services', [])
 
 	return new LastFm();
 })
-.factory('Player', function($interval, Keyboard, Music, Storage, filenameFilter) {
+.factory('Player', function($interval, $window, Keyboard, Music, Storage, filenameFilter) {
 	var Player = function() {
 		var self = this;
 		this.updateInterval = null;
-		this.audio = document.createElement('audio');
-		this.audio.muted = false;
-		this.audio.volume = 1;
-		this.shuffle = false;
-		this.audio.addEventListener('ended', function() {
-			self.next();
-		});
-		this.audio.addEventListener('loadedmetadata', function() {
-			if(self.track.duration !== self.audio.duration) {
-				self.track.duration = self.audio.duration;
-				Music.saveTrack(self.track);
+		
+		this.audio = {
+			ctx: new ($window.AudioContext || $window.webkitAudioContext)(),
+			createSource: function(offset) {
+				var that = this;
+				this.source = this.ctx.createBufferSource();
+				this.source.buffer = this.buffer;
+				this.source.connect(this.splitter || this.ctx.destination);
+				this.source.onended = function() {
+					that.destroySource();
+					delete that.buffer;
+					self.next();
+				};
+				this.source.start(0, offset);
+				this.initTime = this.ctx.currentTime - offset;
+			},
+			destroySource: function() {
+				if(!this.source) return;
+				this.source.onended = null;
+				this.source.stop();
+				this.source.disconnect();
+				delete this.source;
+
+				if(self.arduino && self.arduino.isOpen()) {
+					for(var c=0; c<2; c++) {
+						var avgs = [254, c];
+						for(var i=0; i<self.audio.fft.bands.length - 1; i++) avgs.push(0);
+						self.arduino.write(new Buffer(avgs));
+					}
+				}
+			},
+			seek: function(offset) {
+				if(!this.buffer) return;
+				this.destroySource();
+				this.createSource(Math.max(0, Math.min(self.duration, offset)));
 			}
-		});
+		};
+		if($window.localStorage.getItem('Gatunes:arduino')) {
+			var serialport = require('serialport');
+			this.arduino = new serialport.SerialPort($window.localStorage.getItem('Gatunes:arduino'), {
+				baudrate: 115200/*,
+				parser: serialport.parsers.readline('\n', 'ascii')*/
+			});
+			this.arduino.mode = 0;
+			/*this.arduino.on('data', function(data) {
+				console.log(data);
+			});*/
+			this.audio.splitter = this.audio.ctx.createChannelSplitter(2);
+			this.audio.merger = this.audio.ctx.createChannelMerger(2);
+			this.audio.analysers = [
+				this.audio.ctx.createAnalyser(),
+				this.audio.ctx.createAnalyser()
+			];
+			this.audio.fft = {
+				bands: [0, 1, 2, 4, 7, 15, 29, 58, 117],
+				data: new Uint8Array(this.audio.analysers[0].frequencyBinCount)
+			};
+			this.audio.analysers.forEach(function(analyser, channel) {
+				analyser.smoothingTimeConstant = 0.3;
+				analyser.fftSize = 2048;
+				self.audio.splitter.connect(analyser, channel, 0)
+	      		analyser.connect(self.audio.merger, 0, channel);
+			});
+			this.audio.merger.connect(this.audio.ctx.destination);
+		}
+
+		this.shuffle = false;
 
 		Keyboard.on('MediaPlayPause', function() {
 			self.pause();
@@ -231,24 +285,59 @@ angular.module('Gatunes.services', [])
 			switch(e.key) {
 				case 37:
 					if(meta) self.prev();
-					else self.audio.currentTime -= 5;
+					else self.audio.seek(self.currentTime - 5);
 				break;
 				case 39:
 					if(meta) self.next();
-					else self.audio.currentTime += 5;
+					else self.audio.seek(self.currentTime + 5);
 				break;
 				case 32:
 					!e.repeat && self.pause();
+				break;
+				case 77:
+					if(meta && self.arduino && self.arduino.isOpen()) {
+						++self.arduino.mode >= 10 && (self.arduino.mode = 0);
+						self.arduino.write(new Buffer([253, self.arduino.mode]));
+					}
 				break;
 			}
 		});
 	};
 
 	Player.prototype.play = function(track, playlist) {
+		var self = this;
+
 		this.currentTime = 0;
-		this.audio.src = 'file://' + Storage + '/' + filenameFilter(track.album.artist.name) + '/' + filenameFilter(track.album.title) + '/' + track.filename;
-		this.audio.load();
-		this.audio.play();
+		this.duration = track.duration;
+		
+		if(this.audio.request) {
+			this.audio.request.abort();
+			this.audio.request.aborted = true;
+		}
+		this.audio.destroySource();
+		delete this.audio.paused;
+		delete this.audio.buffer;
+		
+		this.audio.request = new XMLHttpRequest();
+		this.audio.request.open('GET', 'file://' + Storage + '/' + filenameFilter(track.album.artist.name) + '/' + filenameFilter(track.album.title) + '/' + track.filename, true);
+		this.audio.request.responseType = 'arraybuffer';
+		this.audio.request.onload = function() {
+			var request = this;
+			self.audio.ctx.decodeAudioData(this.response, function(decoded) {
+				if(request.aborted) return;
+				delete self.audio.request;
+				self.audio.buffer = decoded;
+				if(track.duration !== decoded.duration) {
+					self.duration = track.duration = decoded.duration;
+					Music.saveTrack(track);
+				}
+				self.audio.createSource(0);
+			}, function() {
+				if(!request.aborted) delete self.audio.request;
+			});
+		}
+		this.audio.request.send();
+
 		this.track = track;
 		this.playlist = playlist;
 		this.updateQueue();
@@ -256,8 +345,13 @@ angular.module('Gatunes.services', [])
 	};
 
 	Player.prototype.pause = function() {
-		if(this.audio.paused) this.audio.play();
-		else this.audio.pause();
+		if(this.audio.paused) {
+			delete this.audio.paused;
+			this.audio.createSource(this.currentTime);
+		} else {
+			this.audio.destroySource();
+			this.audio.paused = true;
+		}
 		this.resetUpdateInterval();
 	};
 
@@ -277,8 +371,31 @@ angular.module('Gatunes.services', [])
 		if(this.audio.paused) return;
 		var self = this;
 		this.updateInterval = $interval(function() {
-			self.currentTime = self.audio.currentTime;
-		}, 50);
+			if(!self.audio.source) return;
+
+			self.currentTime = self.audio.ctx.currentTime - self.audio.initTime;
+
+			if(self.arduino && self.arduino.isOpen()) {
+				var avgs = [];
+				self.audio.analysers.forEach(function(analyser, channel) {
+					analyser.getByteFrequencyData(self.audio.fft.data);
+					avgs.push(254);
+					avgs.push(channel);
+					self.audio.fft.bands.forEach(function(lowerBound, i) {
+						if(i === self.audio.fft.bands.length) return;
+						var upperBound = self.audio.fft.bands[i + 1],
+							avg = 0;
+						
+						for(var i=lowerBound; i<=upperBound; i++) {
+							avg += self.audio.fft.data[i];
+						}
+
+						avgs.push(Math.max(0, Math.min(Math.round(avg / (upperBound - lowerBound + 1)), 250)));
+					});
+				});
+				self.arduino.write(new Buffer(avgs));
+			}
+		}, 1000 / 60);
 	};
 
 	Player.prototype.updateQueue = function() {
@@ -302,10 +419,15 @@ angular.module('Gatunes.services', [])
 
 	Player.prototype.reset = function() {
 		if(!this.track) return;
-		this.audio.src = '';
-		this.audio.load();
+		if(this.audio.request) {
+			this.audio.request.abort();
+			this.audio.request.aborted = true;
+		}
+		this.audio.destroySource();
+		delete this.audio.paused;
 		delete this.track;
 		delete this.currentTime;
+		delete this.duration;
 		delete this.prevTrack;
 		delete this.nextTrack;
 		if(this.updateInterval) {

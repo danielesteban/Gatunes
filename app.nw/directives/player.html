@@ -1,5 +1,5 @@
 <time ng-show="player.track &amp;&amp; (hover || dragging)">{{time | duration}}</time>
-<progress min="0" max="{{player.track.duration || player.audio.duration}}" value="{{player.currentTime}}"></progress>
+<progress min="0" max="{{player.duration}}" value="{{player.currentTime}}"></progress>
 <div class="wrapper">
 	<button ng-click="player.pause()" ng-disabled="!player.track">
 		<i class="fa fa-fw ng-class:{'fa-play': player.audio.paused, 'fa-pause': !player.audio.paused}"></i>
@@ -17,6 +17,6 @@
 		{{player.track.album.artist.name}} - {{player.track.title}}
 	</span>
 	<small class="time">
-		{{player.currentTime | duration}} / {{player.track.duration || player.audio.duration | duration}}
+		{{player.currentTime | duration}} / {{player.duration | duration}}
 	</small>
 </div>
