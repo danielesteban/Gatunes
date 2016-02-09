@@ -10,7 +10,7 @@ angular.module('Gatunes.controllers', [])
 	};
 
 	LastFm.getArtist($scope.artist.name, function(info) {
-		info.bio && info.bio.summary && ($scope.artist.bio = info.bio.summary.replace(/<[^>]*>/g, '').replace(/ Read more on Last\.fm\./g, ''));
+		info.bio && info.bio.summary && ($scope.artist.bio = info.bio.summary.replace(/<[^>]*>/g, '').replace(/ Read more on Last\.fm/g, ''));
 		info.image && info.image.length && ($scope.artist.picture = LastFm.getImage(info));
 	});
 
@@ -18,8 +18,8 @@ angular.module('Gatunes.controllers', [])
 		delete $rootScope.spinnerTop;
 	});
 })
-.controller('browse', function($scope, $routeParams, LastFm) {
-	$scope.baseurl = 'browse';
+.controller('discover', function($scope, $routeParams, LastFm) {
+	$scope.baseurl = 'discover';
 	$scope.page = parseInt($routeParams.page || 2, 10);
 })
 .controller('search', function($scope, $routeParams, Searches) {
@@ -301,7 +301,7 @@ angular.module('Gatunes.controllers', [])
 			template: 'dialogs/confirm.html'
 		}).then(function() {
 			reset(function() {
-				$location.path('/browse');
+				$location.path('/discover');
 				ngDialog.open({
 					template: 'dialogs/terms.html',
 					controller: 'terms',

@@ -106,7 +106,7 @@ angular.module('Gatunes.directives', [])
 			scope.player = Player;
 			$rootScope.$on("$routeChangeSuccess", function() {
 				var path = $location.path().split('/');
-				path[1] === 'browse' && path[2] && path.pop();
+				path[1] === 'discover' && path[2] && path.pop();
 				path[1] === 'search' && path[3] && path.pop();
 				scope.active = path.join('/');
 			});
@@ -190,8 +190,8 @@ angular.module('Gatunes.directives', [])
 		restrict: 'E',
 		templateUrl: 'directives/artists.html',
 		scope: {
-			similar: '=',
-			genre: '=',
+			similar: '=?',
+			genre: '=?',
 			page: '=',
 			baseurl: '='
 		},
@@ -227,10 +227,10 @@ angular.module('Gatunes.directives', [])
 		restrict: 'E',
 		templateUrl: 'directives/torrents.html',
 		scope: {
-			torrents: '=',
-			query: '=',
-			page: '=',
-			baseurl: '='
+			baseurl: '=',
+			page: '=?',
+			torrents: '=?',
+			query: '=?'
 		},
 		link: function(scope, element, attrs) {
 			scope.i18n = i18n;

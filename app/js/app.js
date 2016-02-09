@@ -15,8 +15,8 @@ angular.module('Gatunes', [
 	$routeProvider.when('/artist/:name', {controller: 'artist', templateUrl: 'views/artist.html'});
 	$routeProvider.when('/downloads', {controller: 'downloads', templateUrl: 'views/downloads.html'});
 	$routeProvider.when('/music', {controller: 'music', templateUrl: 'views/music.html'});
-	$routeProvider.when('/browse', {controller: 'browse', templateUrl: 'views/browse.html'});
-	$routeProvider.when('/browse/:page', {controller: 'browse', templateUrl: 'views/browse.html'});
+	$routeProvider.when('/discover', {controller: 'discover', templateUrl: 'views/discover.html'});
+	$routeProvider.when('/discover/:page', {controller: 'discover', templateUrl: 'views/discover.html'});
 	$routeProvider.when('/search/:query', {controller: 'search', templateUrl: 'views/search.html'});
 	$routeProvider.when('/search/:query/:page', {controller: 'search', templateUrl: 'views/search.html'});
 	$routeProvider.when('/playlist/:id', {controller: 'playlist', templateUrl: 'views/playlist.html'});
@@ -34,7 +34,7 @@ angular.module('Gatunes', [
 		});
 	}
 
-	if(!Music.tracks.length) $location.path('/browse');
+	if(!Music.tracks.length) $location.path('/discover');
 
 	$rootScope.i18n = i18n;
 	$rootScope.loaded = true;
