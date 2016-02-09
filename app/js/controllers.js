@@ -177,9 +177,13 @@ angular.module('Gatunes.controllers', [])
 	};
 	
 	$scope.restore = function() {
-		var input = angular.element('<input type="file" accept=".json">');
-		input.on('change', function() {
-			fs.readFile(this.value, 'utf-8', function(err, data) {
+		dialog.showOpenDialog({
+			defaultPath: Storage,
+			filters: [
+				{name: 'JSON', extensions: ['json']}
+			]
+		}, function(files) {
+			files && fs.readFile(files[0], 'utf-8', function(err, data) {
 				if(err) return;
 				try {
 					data = JSON.parse(data);
@@ -291,7 +295,6 @@ angular.module('Gatunes.controllers', [])
 				});
 			});
 		});
-		input[0].click();
 	};
 	$scope.reset = function() {
 		ngDialog.openConfirm({
