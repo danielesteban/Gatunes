@@ -10,8 +10,7 @@ angular.module('Gatunes.directives', [])
 		link: function(scope, element, attrs) {
 			scope.i18n = i18n;
 
-			var gui = require('nw.gui'),
-				win = gui.Window.get(),
+			var win = require('remote').getCurrentWindow(),
 				maximized = false;
 
 			win.on('resize', function() {
@@ -63,9 +62,10 @@ angular.module('Gatunes.directives', [])
 							x: e.screenX - startPos.x,
 							y: e.screenY - startPos.y
 						},
+						position = win.getPosition(),
 						translate = {
-							x: win.x + delta.x,
-							y: Math.min(maxY, Math.max(minY, win.y + delta.y))
+							x: position[0] + delta.x,
+							y: Math.min(maxY, Math.max(minY, position[1] + delta.y))
 						};
 
 					startPos = {
@@ -73,7 +73,7 @@ angular.module('Gatunes.directives', [])
 						y: e.screenY
 					};
 
-					win.moveTo(translate.x, translate.y);
+					win.setPosition(translate.x, translate.y);
 				},
 				mouseup = function() {
 					$window.removeEventListener('mousemove', mousemove);
@@ -239,9 +239,9 @@ angular.module('Gatunes.directives', [])
 				
 				var url;
 				if(scope.query) {
-					url = 'https://thepiratebay.la/search/' + encodeURIComponent(scope.query) + '/' + scope.page + '/7/101';
+					url = 'https://pirateproxy.pw/search/' + encodeURIComponent(scope.query) + '/' + scope.page + '/7/101';
 				} else {
-					url = 'https://thepiratebay.la/browse/101/' + scope.page + '/7/0';
+					url = 'https://pirateproxy.pw/browse/101/' + scope.page + '/7/0';
 				}
 
 				scope.loading = true;
@@ -283,6 +283,7 @@ angular.module('Gatunes.directives', [])
 							var torrent = t.shift();
 							if(!torrent || destroyed) return;
 							if(torrent.picture) return fetchImage();
+							//TODO: Replace this deprecated API
 							$http({
 								url: 'http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=' + encodeURIComponent(torrent.title.toLowerCase().replace(/mp3/g, '').replace(/torrent/g, '')),
 								method: 'GET',
@@ -301,7 +302,7 @@ angular.module('Gatunes.directives', [])
 							});
 						};
 
-					fetchImage();
+					//fetchImage();
 
 					scope.$on('$destroy', function() {
 						destroyed = true;

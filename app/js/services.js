@@ -11,6 +11,7 @@ angular.module('Gatunes.services', [])
 	return storage;
 }())
 .factory('Autoupdater', function($http, ngDialog) {
+	//TODO: Replace this with the Electron's built-in AutoUpdater
 	var fs = require('fs'),
 		path = require('path'),
 		crypto = require('crypto'),
@@ -76,8 +77,9 @@ angular.module('Gatunes.services', [])
 })
 .factory('Keyboard', function($window) {
 	var Keyboard = function() {
-		var gui = require('nw.gui'),
-			win = gui.Window.get(),
+		var remote = require('remote'),
+			win = remote.getCurrentWindow(),
+			globalShortcut = remote.globalShortcut,
 			callbacks = {},
 			emit = function(event, data) {
 				callbacks[event] && callbacks[event].forEach(function(cb) {
@@ -91,7 +93,7 @@ angular.module('Gatunes.services', [])
 					if(this.code[this.step] !== key) return this.step = 0;
 					if(++this.step < this.code.length) return;
 					this.step = 0;
-					win.showDevTools();
+					win.webContents.openDevTools();
 				}
 			};
 
@@ -103,15 +105,10 @@ angular.module('Gatunes.services', [])
 			konami.stroke(e.keyCode);
 		});
 
-		['MediaPlayPause', 'MediaNextTrack', 'MediaPrevTrack'].forEach(function(key) {
-			var shortcut = new gui.Shortcut({
-					key: key,
-					active: function() {
-						emit(key); 
-					}
-				});
-
-			gui.App.registerGlobalHotKey(shortcut);
+		['MediaPlayPause', 'MediaNextTrack', 'MediaPreviousTrack'].forEach(function(key) {
+			globalShortcut.register(key, function() {
+				emit(key);
+			});
 		});
 
 		this.on = function(event, callback) {
@@ -196,6 +193,8 @@ angular.module('Gatunes.services', [])
 	return new LastFm();
 })
 .factory('Player', function($interval, $window, Keyboard, Music, Storage, filenameFilter) {
+	var fs = require('fs');
+
 	var Player = function() {
 		var self = this;
 		this.updateInterval = null;
@@ -275,7 +274,7 @@ angular.module('Gatunes.services', [])
 			self.next();
 		});
 
-		Keyboard.on('MediaPrevTrack', function() {
+		Keyboard.on('MediaPreviousTrack', function() {
 			self.prev();
 		});
 
@@ -310,22 +309,20 @@ angular.module('Gatunes.services', [])
 		this.currentTime = 0;
 		this.duration = track.duration;
 		
-		if(this.audio.request) {
-			this.audio.request.abort();
-			this.audio.request.aborted = true;
-		}
+		this.audio.loading && (this.audio.loading.aborted = true);
 		this.audio.destroySource();
 		delete this.audio.paused;
 		delete this.audio.buffer;
 		
-		this.audio.request = new XMLHttpRequest();
-		this.audio.request.open('GET', 'file://' + Storage + '/' + filenameFilter(track.album.artist.name) + '/' + filenameFilter(track.album.title) + '/' + track.filename, true);
-		this.audio.request.responseType = 'arraybuffer';
-		this.audio.request.onload = function() {
-			var request = this;
-			self.audio.ctx.decodeAudioData(this.response, function(decoded) {
-				if(request.aborted) return;
-				delete self.audio.request;
+		var loading = this.audio.loading = {};
+		fs.readFile(Storage + '/' + filenameFilter(track.album.artist.name) + '/' + filenameFilter(track.album.title) + '/' + track.filename, function(err, raw) {
+			if(err || !raw) {
+				if(!loading.aborted) delete self.audio.loading;
+				return;
+			}
+			self.audio.ctx.decodeAudioData(raw.buffer, function(decoded) {
+				if(loading.aborted) return;
+				delete self.audio.loading;
 				self.audio.buffer = decoded;
 				if(track.duration !== decoded.duration) {
 					self.duration = track.duration = decoded.duration;
@@ -333,10 +330,9 @@ angular.module('Gatunes.services', [])
 				}
 				self.audio.createSource(0);
 			}, function() {
-				if(!request.aborted) delete self.audio.request;
+				if(!loading.aborted) delete self.audio.loading;
 			});
-		}
-		this.audio.request.send();
+		});
 
 		this.track = track;
 		this.playlist = playlist;
@@ -419,9 +415,9 @@ angular.module('Gatunes.services', [])
 
 	Player.prototype.reset = function() {
 		if(!this.track) return;
-		if(this.audio.request) {
-			this.audio.request.abort();
-			this.audio.request.aborted = true;
+		if(this.audio.loading) {
+			this.audio.loading.aborted = true;
+			delete this.audio.loading;
 		}
 		this.audio.destroySource();
 		delete this.audio.paused;

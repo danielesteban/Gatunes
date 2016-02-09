@@ -24,25 +24,6 @@ angular.module('Gatunes', [
 	$routeProvider.otherwise({redirectTo: '/music'});
 })
 .run(function($rootScope, $location, $window, ngDialog, Autoupdater, i18n, Music, Torrents, Storage) {
-	var gui = require('nw.gui'),
-		win = gui.Window.get();
-
-	if(process.platform === 'darwin') {
-		var mb = new gui.Menu({type: "menubar"});
-		mb.createMacBuiltin("Gatunes", {
-			hideWindow: true
-		});
-		win.menu = mb;
-	}
-
-	win.on('close', function() {
-		var self = this;
-		this.hide();
-		Torrents.destroy(function() {
-			self.close(true);
-		});
-	});
-
 	if(!$window.localStorage.getItem('Gatunes:AcceptedTerms')) {
 		ngDialog.open({
 			template: 'dialogs/terms.html',
@@ -58,7 +39,7 @@ angular.module('Gatunes', [
 	$rootScope.i18n = i18n;
 	$rootScope.loaded = true;
 
-	Autoupdater.run();
+	//Autoupdater.run();
 
 	console.log("\n\n,---.<-.(`-\')  (`-\')  _ (`-\')  _ _  (`-\')                          (`-\')     ,---. \n|   | __( OO)  ( OO).-/ ( OO).-/ \\-.(OO )         .->        .->   ( OO).->  |   | \n|   |\ƒ-\'. ,--.(,------.(,------. _.\'    \\    (`-\')----. ,--.(,--.  /    \'._  |   | \n|   ||  .\'   / |  .---\' |  .---\'(_...--\'\'    ( OO).-.  \'|  | |(`-\')|\'--...__)|   | \n|  .\'|      /)(|  \'--. (|  \'--. |  |_.\' |    ( _) | |  ||  | |(OO )`--.  .--\'|  .\' \n`--\' |  .   \'  |  .--\'  |  .--\' |  .___.\'     \\|  |)|  ||  | | |  \\   |  |   `--\'  \n.--. |  |\\   \\ |  `---. |  `---.|  |           \'  \'-\'  \'\\  \'-\'(_ .\'   |  |   .--.  \n`--\' `--\' \'--\' `------\' `------\'`--\'            `-----\'  `-----\'      `--\'   `--\'  \n\nYou shouldn't be here!\n'A great power comes with a great responsibility'\n\nProceed with caution...\n\n\n");
 });

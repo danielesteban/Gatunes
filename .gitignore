@@ -1,7 +1,6 @@
 .DS_Store
-app.nw/.sass-cache/
-app.nw/css/screen.css
-app.nw/node_modules/
-bundle/
+app/.sass-cache/
+app/css/screen.css
+app/node_modules/
 landing/.sass-cache/
 landing/css/screen.css

@@ -7,19 +7,21 @@ Go to: http://gatunes.com
 
 **To tinker with the source:**
 
-* Update the symbolic link in "Gatunes.app/Contents/Resources/app.nw/" to the right absolute path
- 
-  ```rm Gatunes.app/Contents/Resources/app.nw && ln -s /Users/dani/Code/Opensource/Gatunes/app.nw Gatunes.app/Contents/Resources/app.nw```
-
-* Install the npm modules in "app.nw/"
+* Clone this repo and go inside the 'app' folder
   
-  ```cd app.nw && npm install```
+  ```git clone https://github.com/danielesteban/Gatunes.git && cd Gatunes/app```
 
-* Run a sass compiler in "app.nw/css/"
+* Install the dependencies
   
-  ```sass --watch --sourcemap=none --style=compressed --scss app.nw/css/screen.scss:app.nw/css/screen.css```
+  ```npm install && ./node_modules/.bin/electron-rebuild```
 
-* A custom "ffmpegsumo.so" build with multiple proprietary audio/video codecs support was included for developing convenience. It was extracted from the popcorntime.io app. I'm not the owner of this file, nor I'm responsible for what it does or what you do with it.
+* Spawn the sass compiler (in another terminal)
+  
+  ```npm run sass```
+
+* Start the app
+  
+  ```npm start```
 
 **License:**
 

@@ -1,0 +1,19 @@
+{
+	"name": "Gatunes",
+	"version": "0.0.7",
+	"main": "main.js",
+	"scripts": {
+		"start": "electron main.js",
+		"sass": "sass --watch --sourcemap=none --style=compressed --scss css/screen.scss:css/screen.css"
+	},
+	"dependencies": {
+		"adm-zip": "^0.4.7",
+		"kickass-search": "0.0.8",
+		"musicmetadata": "^2.0.2",
+		"torrent-stream": "^1.0.2"
+	},
+	"devDependencies": {
+		"electron-prebuilt": "^0.36.7",
+		"electron-rebuild": "^1.1.3"
+	}
+}

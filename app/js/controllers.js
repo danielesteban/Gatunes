@@ -82,9 +82,9 @@ angular.module('Gatunes.controllers', [])
 	};
 })
 .controller('preferences', function($rootScope, $scope, $location, $window, Autoupdater, i18n, Music, ngDialog, Player, Playlists, Storage, Torrents, addzeroFilter, filenameFilter) {
-	var gui = require('nw.gui'),
-		fs = require('fs'),
-		path = require('path');
+	var	fs = require('fs'),
+		path = require('path'),
+		dialog = require('remote').dialog;
 
 	$scope.version = Autoupdater.currentVersion;
 	$scope.storage = Storage;
@@ -146,17 +146,19 @@ angular.module('Gatunes.controllers', [])
 			playlists.push(playlist);
 		});
 
-		var now = new Date(),
-			input = angular.element('<input type="file" nwsaveas="' + path.join(Storage, 'Gatunes_' + now.getFullYear() + '-' + addzeroFilter(now.getMonth() + 1) + '-' + addzeroFilter(now.getDate()) + '.json') + '" accept=".json">');
-		
-		input.on('change', function() {
-			fs.writeFileSync(this.value, JSON.stringify({
+		var now = new Date();
+		dialog.showSaveDialog({
+			defaultPath: path.join(Storage, 'Gatunes_' + now.getFullYear() + '-' + addzeroFilter(now.getMonth() + 1) + '-' + addzeroFilter(now.getDate()) + '.json'),
+			filters: [
+				{name: 'JSON', extensions: ['json']}
+			]
+		}, function(file) {
+			file && fs.writeFileSync(file, JSON.stringify({
 				artists: artists,
 				magnets: magnets,
 				playlists: playlists
 			}, null, '\t'));
 		});
-		input[0].click();
 	};
 
 	var reset = function(callback) {
@@ -309,19 +311,19 @@ angular.module('Gatunes.controllers', [])
 	};
 })
 .controller('terms', function($scope, $window, ngDialog) {
-	var gui = require('nw.gui');
+	var app = require('remote').app;
 	$scope.accept = function() {
 		$window.localStorage.setItem('Gatunes:AcceptedTerms', 1);
 		ngDialog.close();
 	};
 	$scope.leave = function() {
-		gui.App.quit();
+		app.quit();
 	};
 })
 .controller('updated', function($scope, Autoupdater) {
-	var gui = require('nw.gui');
+	var app = require('remote').app;
 	$scope.version = Autoupdater.currentVersion;
 	$scope.restart = function() {
-		gui.App.quit();
+		app.quit();
 	};
 });
