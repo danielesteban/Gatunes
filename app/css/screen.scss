@@ -241,7 +241,7 @@ aside {
 		}
 		&.dropping {
 			padding: 4px 13px 4px 36px;
-			border: 2px dashed rgba(255, 0, 0, .6);
+			border: 2px dashed rgba(255, 0, 153, .6);
 			.fa {
 				top: 7px;
 				left: 13px;
@@ -263,7 +263,7 @@ aside {
 		}
 		&.dropping {
 			color: #f09;
-			border-color: rgba(255, 0, 0, .6);
+			border-color: rgba(255, 0, 153, .6);
 		}
 	}
 }
