@@ -58,14 +58,13 @@ angular.module('Gatunes.controllers', [])
 
 	var artistCache,
 		scrollCache,
-		headerHeight = 50,
-		shiftTimeout = null,
+		scrollTimeout,
 		onKeydown = function(e) {
 			if(e.key !== 16) return;
 			artistCache = [];
 			scrollCache = scrollTop;
 			var artists = $window.document.querySelectorAll('artist'),
-				mouseY = Mouse.pos.y + scrollTop - headerHeight,
+				mouseY = Mouse.pos.y + scrollTop,
 				hover;
 
 			if(!artists.length) return;
@@ -73,7 +72,7 @@ angular.module('Gatunes.controllers', [])
 				var rect = artists[i].getBoundingClientRect(),
 					artist = {
 						node: artists[i],
-						offset: rect.top + scrollTop - headerHeight,
+						offset: rect.top + scrollTop,
 						height: rect.height
 					};
 
@@ -85,17 +84,20 @@ angular.module('Gatunes.controllers', [])
 			$scope.collapsed = true;
 			$scope.$apply();
 			
-			shiftTimeout = $timeout(function() {
+			$window.document.querySelector('[ng-view]').scrollTop = 0;
+			scrollTimeout = $timeout(function() {
 				var rect = hover.node.getBoundingClientRect();
-				$scope.$emit('setScroll', rect.top + rect.height / 2 + scrollTop - headerHeight - Mouse.pos.y + headerHeight);
-				shiftTimeout = null;
-			}, 150);
+				$scope.$emit('setScroll', rect.top + rect.height / 2 - Mouse.pos.y);
+				scrollTimeout = $timeout(function() {
+					scrollTimeout = null;
+				}, 150);
+			}, 0);
 		},
 		onKeyup = function(e) {
 			if(e.key !== 16) return;
-			if(shiftTimeout !== null) {
-				$timeout.cancel(shiftTimeout);
-				shiftTimeout = null;
+			if(scrollTimeout !== null) {
+				$timeout.cancel(scrollTimeout);
+				scrollTimeout = null;
 				delete $scope.collapsed;
 				$scope.$apply();
 				$timeout(function() {
@@ -103,12 +105,12 @@ angular.module('Gatunes.controllers', [])
 				}, 0);
 				return;
 			}
-			var mouseY = Mouse.pos.y + scrollTop - headerHeight,
+			var mouseY = Mouse.pos.y + scrollTop,
 				hover;
 
 			for(var i=0; i<artistCache.length; i++) {
 				var rect = artistCache[i].node.getBoundingClientRect(),
-					offset = rect.top + scrollTop - headerHeight;
+					offset = rect.top + scrollTop;
 
 				offset <= mouseY && (hover = artistCache[i]);
 			}
@@ -118,7 +120,7 @@ angular.module('Gatunes.controllers', [])
 			$scope.$apply();
 
 			$timeout(function() {
-				$scope.$emit('setScroll', hover.offset + hover.height / 2 - Mouse.pos.y + headerHeight);
+				$scope.$emit('setScroll', hover.offset + hover.height / 2 - Mouse.pos.y);
 			}, 0);
 		};
 
