@@ -2,7 +2,7 @@
 
 /* Directives */
 angular.module('Gatunes.directives', [])
-.directive('header', function($location, $rootScope, Music, i18n, $window) {
+.directive('header', function($location, $rootScope, Music, i18n, ngDialog, $window) {
 	return {
 		restrict: 'E',
 		templateUrl: 'directives/header.html',
@@ -72,37 +72,57 @@ angular.module('Gatunes.directives', [])
 					]
 				}, function(files) {
 					if(!files) return;
-					var process = function() {
-							var file = files.shift();
-							if(!file) return;
-							fs.stat(file.name, function(err, stats) {
-								if(stats.isDirectory()) {
-									fs.readdir(file.name, function(err, directory) {
-										directory.forEach(function(entry, index) {
-											files.push({
-												name: path.join(file.name, entry),
-												index: index
-											});
-										});
-										process();
-									});
-								} else if(extensions.indexOf(path.extname(file.name).substr(1)) === -1) {
-									process();
-								} else {
-									Music.addTrack(fs.createReadStream(file.name), path.basename(file.name), stats.size, null, file.index, path.basename(path.dirname(file.name)), function() {
-										process();
-									});
-								}
-							});
-						};
+					var dialogScope = scope['$new']();
+					dialogScope.progress = 0;
+					dialogScope.total = files.length;
 
-					files.forEach(function(name, index) {
-						files[index] = {
-							name: name,
-							index: index
-						};
+					ngDialog.open({
+						template: 'dialogs/addingMusic.html',
+						showClose: false,
+						closeByDocument: false,
+						closeByEscape: false,
+						scope: dialogScope
 					});
-					process();
+
+					var unbindOpened = dialogScope.$on('ngDialog.opened', function() {
+						unbindOpened();
+						var process = function() {
+								var file = files.shift();
+								if(!file) return ngDialog.close();
+								dialogScope.progress++;
+								dialogScope.$apply();
+
+								fs.stat(file.name, function(err, stats) {
+									if(stats.isDirectory()) {
+										fs.readdir(file.name, function(err, directory) {
+											directory.forEach(function(entry, index) {
+												if(['.', '..'].indexOf(entry) !== -1) return;
+												files.push({
+													name: path.join(file.name, entry),
+													index: index
+												});
+												dialogScope.total++;
+											});
+											process();
+										});
+									} else if(extensions.indexOf(path.extname(file.name).substr(1)) === -1) {
+										process();
+									} else {
+										Music.addTrack(fs.createReadStream(file.name), path.basename(file.name), stats.size, null, file.index, path.basename(path.dirname(file.name)), function() {
+											process();
+										});
+									}
+								});
+							};
+
+						files.forEach(function(name, index) {
+							files[index] = {
+								name: name,
+								index: index
+							};
+						});
+						process();
+					});
 				});
 			};
 

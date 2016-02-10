@@ -41,7 +41,8 @@ angular.module('Gatunes.i18n', [])
 			areYouSure: 'Are you sure?',
 			confirm: 'Confirm',
 			cancel: 'Cancel',
-			addMusic: 'Add Music from your computer'
+			addMusic: 'Add music from your computer',
+			addingMusic: 'Adding music'
 		},
 		es: {
 			music: 'Música',
@@ -79,7 +80,8 @@ angular.module('Gatunes.i18n', [])
 			areYouSure: '¿Estás seguro?',
 			confirm: 'Confirmar',
 			cancel: 'Cancelar',
-			addMusic: 'Añadir Musica de tu ordenador'
+			addMusic: 'Añadir música de tu ordenador',
+			addingMusic: 'Añadiendo música'
 		}
 	};
 
