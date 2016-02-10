@@ -19,7 +19,7 @@
 					<i class="fa fa-windows"></i>Download Beta 0.0.8
 				</a>
 				<platform>
-					<span>For Windows 7 (64-bit) and above</span> | <a href="#platforms">Other platforms</a>
+					<span>For 64-bit Windows 7 and above</span> | <a href="#platforms">Other platforms</a>
 				</platform>
 			</p>
 		</main>
@@ -36,7 +36,15 @@
 					<i class="fa fa-windows"></i>Download Beta 0.0.8
 				</a>
 				<platform>
-					For Windows 7 (64-bit) and above
+					For 64-bit Windows 7 and above
+				</platform>
+			</div>
+			<div>
+				<a href="https://github.com/danielesteban/Gatunes/releases/download/v0.0.8/GatunesWin32.zip" class="btn">
+					<i class="fa fa-windows"></i>Download Beta 0.0.8
+				</a>
+				<platform>
+					For 32-bit Windows 7 and above
 				</platform>
 			</div>
 			<div>
@@ -44,7 +52,7 @@
 					<i class="fa fa-apple"></i>Download Beta 0.0.8
 				</a>
 				<platform>
-					For Mac OSX 10.9 (64-bit) and above
+					For 64-bit Mac OSX 10.9 and above
 				</platform>
 			</div>
 			<div>
@@ -53,6 +61,14 @@
 				</a>
 				<platform>
 					For 64-bit Linux
+				</platform>
+			</div>
+			<div>
+				<a href="https://github.com/danielesteban/Gatunes/releases/download/v0.0.8/GatunesLinux32.zip" class="btn">
+					<i class="fa fa-linux"></i>Download Beta 0.0.8
+				</a>
+				<platform>
+					For 32-bit Linux
 				</platform>
 			</div>
 		</platforms>
@@ -65,8 +81,8 @@
 			platforms = document.getElementsByTagName('div'),
 			platform = 0;
 
-		version.indexOf("Mac") !== -1 && (platform = 1);
-		(version.indexOf("X11") !== -1 || version.indexOf("Linux") !== -1) && (platform = 2);
+		version.indexOf("Mac") !== -1 && (platform = 2);
+		(version.indexOf("X11") !== -1 || version.indexOf("Linux") !== -1) && (platform = 3);
 
 		mainLink.href = platforms[platform].getElementsByTagName('a')[0].href;
 		mainLink.getElementsByTagName('i')[0].className = platforms[platform].getElementsByTagName('i')[0].className;
