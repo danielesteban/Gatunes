@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="msapplication-tap-highlight" content="no">
+		<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+		<link rel="stylesheet" type="text/css" href="css/screen.css">
+		<title>Gatunes</title>
+		<script>
+			var e = function(id) { return document.getElementById(id) };
+			function error() {
+				e('downloading').style.display = 'none';
+				e('error').style.display = '';
+			}
+			function done(version) {
+				e('version').innerHTML = version;
+				e('downloading').style.display = 'none';
+				e('done').style.display = '';
+			}
+			function progress(progress) {
+				e('progress').value = progress;
+			}
+		</script>
+	</head>
+	<body bgcolor="#000" class="autoupdater loaded">
+		<div id="downloading">
+			<h1><i class="fa fa-cloud-download"></i> Downloading update...</h1>
+			<progress id="progress" value="0" min="0" max="1"></progress>
+		</div>
+		<div id="done" style="display:none">
+			<h1>
+				Gatunes has been updated to version: v<span id="version"></span><br>
+				Please restart the app.<br>
+				<button onclick="window.close()"><i class="fa fa-times"></i> Close</button>
+			</h1>
+		</div>
+		<div id="error" style="display:none">
+			<h1>
+				There was an error downloading the update.<br>
+				Please try again in a few minutes.<br>
+				<button onclick="window.close()"><i class="fa fa-times"></i> Close</button>
+			</h1>
+		</div>
+	</body>
+</html>

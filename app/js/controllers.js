@@ -160,12 +160,13 @@ angular.module('Gatunes.controllers', [])
 		});
 	};
 })
-.controller('preferences', function($rootScope, $scope, $location, $window, Autoupdater, i18n, Music, ngDialog, Player, Playlists, Storage, Torrents, addzeroFilter, filenameFilter) {
+.controller('preferences', function($rootScope, $scope, $location, $window, i18n, Music, ngDialog, Player, Playlists, Storage, Torrents, addzeroFilter, filenameFilter) {
 	var	fs = require('fs'),
 		path = require('path'),
-		dialog = require('remote').dialog;
+		remote = require('remote'),
+		dialog = remote.dialog;
 
-	$scope.version = Autoupdater.currentVersion;
+	$scope.version = remote.app.getVersion();
 	$scope.storage = Storage;
 	$scope.locale = i18n.locale;
 	$scope.$watch('locale', function(locale) {
@@ -399,13 +400,6 @@ angular.module('Gatunes.controllers', [])
 		ngDialog.close();
 	};
 	$scope.leave = function() {
-		app.quit();
-	};
-})
-.controller('updated', function($scope, Autoupdater) {
-	var app = require('remote').app;
-	$scope.version = Autoupdater.currentVersion;
-	$scope.restart = function() {
 		app.quit();
 	};
 });

@@ -23,7 +23,7 @@ angular.module('Gatunes', [
 	$routeProvider.when('/preferences', {controller: 'preferences', templateUrl: 'views/preferences.html'});
 	$routeProvider.otherwise({redirectTo: '/music'});
 })
-.run(function($rootScope, $location, $window, ngDialog, Autoupdater, i18n, Music, Torrents, Storage) {
+.run(function($rootScope, $location, $window, ngDialog, i18n, Music, Torrents, Storage) {
 	var remote = require('remote'),
 		win = remote.getCurrentWindow();
 
@@ -112,8 +112,6 @@ angular.module('Gatunes', [
 
 	$rootScope.i18n = i18n;
 	$rootScope.loaded = true;
-
-	Autoupdater.run();
 
 	console.log("\n\n,---.<-.(`-\')  (`-\')  _ (`-\')  _ _  (`-\')                          (`-\')     ,---. \n|   | __( OO)  ( OO).-/ ( OO).-/ \\-.(OO )         .->        .->   ( OO).->  |   | \n|   |\ƒ-\'. ,--.(,------.(,------. _.\'    \\    (`-\')----. ,--.(,--.  /    \'._  |   | \n|   ||  .\'   / |  .---\' |  .---\'(_...--\'\'    ( OO).-.  \'|  | |(`-\')|\'--...__)|   | \n|  .\'|      /)(|  \'--. (|  \'--. |  |_.\' |    ( _) | |  ||  | |(OO )`--.  .--\'|  .\' \n`--\' |  .   \'  |  .--\'  |  .--\' |  .___.\'     \\|  |)|  ||  | | |  \\   |  |   `--\'  \n.--. |  |\\   \\ |  `---. |  `---.|  |           \'  \'-\'  \'\\  \'-\'(_ .\'   |  |   .--.  \n`--\' `--\' \'--\' `------\' `------\'`--\'            `-----\'  `-----\'      `--\'   `--\'  \n\nYou shouldn't be here!\n'A great power comes with a great responsibility'\n\nProceed with caution...\n\n\n");
 });
