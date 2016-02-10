@@ -57,10 +57,13 @@ angular.module('Gatunes.controllers', [])
 	}, 0);
 
 	var artistCache,
+		scrollCache,
 		headerHeight = 50,
+		shiftTimeout = null,
 		onKeydown = function(e) {
 			if(e.key !== 16) return;
 			artistCache = [];
+			scrollCache = scrollTop;
 			var artists = $window.document.querySelectorAll('artist'),
 				mouseY = Mouse.pos.y + scrollTop - headerHeight,
 				hover;
@@ -82,13 +85,24 @@ angular.module('Gatunes.controllers', [])
 			$scope.collapsed = true;
 			$scope.$apply();
 			
-			$timeout(function() {
+			shiftTimeout = $timeout(function() {
 				var rect = hover.node.getBoundingClientRect();
 				$scope.$emit('setScroll', rect.top + rect.height / 2 + scrollTop - headerHeight - Mouse.pos.y + headerHeight);
+				shiftTimeout = null;
 			}, 150);
 		},
 		onKeyup = function(e) {
 			if(e.key !== 16) return;
+			if(shiftTimeout !== null) {
+				$timeout.cancel(shiftTimeout);
+				shiftTimeout = null;
+				delete $scope.collapsed;
+				$scope.$apply();
+				$timeout(function() {
+					$scope.$emit('setScroll', scrollCache);
+				}, 0);
+				return;
+			}
 			var mouseY = Mouse.pos.y + scrollTop - headerHeight,
 				hover;
 
