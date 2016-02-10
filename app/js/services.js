@@ -102,15 +102,20 @@ angular.module('Gatunes.services', [])
 					this.step = 0;
 					win.webContents.openDevTools();
 				}
+			},
+			handler = function(event) {
+				return function(e) {
+					var fromInput = e.target.tagName.toLowerCase() === 'input';
+					if(fromInput) return;
+					[32, 16, 18].indexOf(e.keyCode) !== -1 && e.preventDefault();
+					emit(event, {key: e.keyCode, repeat: e.repeat, metaKey: e.metaKey, shiftKey: e.shiftKey, altKey: e.altKey, ctrlKey: e.ctrlKey});
+					event === 'keydown' && konami.stroke(e.keyCode);
+				};
 			};
 
-		$window.addEventListener('keydown', function(e) {
-			var fromInput = e.target.tagName.toLowerCase() === 'input';
-			if(fromInput) return;
-			[32, 16, 18].indexOf(e.keyCode) !== -1 && e.preventDefault();
-			emit('keydown', {key: e.keyCode, repeat: e.repeat, metaKey: e.metaKey, shiftKey: e.shiftKey, altKey: e.altKey, ctrlKey: e.ctrlKey});
-			konami.stroke(e.keyCode);
-		});
+		$window.addEventListener('keydown', handler('keydown'));
+
+		$window.addEventListener('keyup', handler('keyup'));
 
 		['MediaPlayPause', 'MediaNextTrack', 'MediaPreviousTrack'].forEach(function(key) {
 			globalShortcut.register(key, function() {
@@ -122,9 +127,35 @@ angular.module('Gatunes.services', [])
 			!callbacks[event] && (callbacks[event] = []);
 			callbacks[event].push(callback);
 		};
+
+		this.off = function(event, callback) {
+			if(!callbacks[event]) return;
+			for(var i=0; i<callbacks[event].length; i++) {
+				if(callbacks[event][i] === callback) {
+					callbacks[event].splice(i, 1);
+					break;
+				}
+			}
+		};
 	};
 
 	return new Keyboard();
+})
+.factory('Mouse', function($window) {
+	var Mouse = function() {
+		var callbacks = {},
+			pos = this.pos = {
+				x: -1,
+				y: -1
+			};
+
+		$window.addEventListener('mousemove', function(e) {
+			pos.x = e.clientX;
+			pos.y = e.clientY;
+		});
+	};
+
+	return new Mouse();
 })
 .factory('LastFm', function($http) {
 	var LastFm = function() {

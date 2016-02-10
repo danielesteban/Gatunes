@@ -38,7 +38,10 @@ angular.module('Gatunes.i18n', [])
 			restoreDB: 'Restore',
 			restoringDB: 'Restoring the database',
 			resetDB: 'Reset',
-			areYouSure: 'Are you sure?'
+			areYouSure: 'Are you sure?',
+			confirm: 'Confirm',
+			cancel: 'Cancel',
+			addMusic: 'Add Music from your computer'
 		},
 		es: {
 			music: 'Música',
@@ -73,7 +76,10 @@ angular.module('Gatunes.i18n', [])
 			restoreDB: 'Restaurar',
 			restoringDB: 'Restaurando la base de datos',
 			resetDB: 'Reiniciar',
-			areYouSure: '¿Estás seguro?'
+			areYouSure: '¿Estás seguro?',
+			confirm: 'Confirmar',
+			cancel: 'Cancelar',
+			addMusic: 'Añadir Musica de tu ordenador'
 		}
 	};
 

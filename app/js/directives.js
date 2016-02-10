@@ -2,7 +2,7 @@
 
 /* Directives */
 angular.module('Gatunes.directives', [])
-.directive('header', function($location, $rootScope, i18n, $window) {
+.directive('header', function($location, $rootScope, Music, i18n, $window) {
 	return {
 		restrict: 'E',
 		templateUrl: 'directives/header.html',
@@ -10,7 +10,11 @@ angular.module('Gatunes.directives', [])
 		link: function(scope, element, attrs) {
 			scope.i18n = i18n;
 
-			var win = require('remote').getCurrentWindow(),
+			var fs = require('fs'),
+				crypto = require('crypto'),
+				path = require('path'),
+				remote = require('remote'),
+				win = remote.getCurrentWindow(),
 				maximized = false;
 
 			win.on('resize', function() {
@@ -52,6 +56,54 @@ angular.module('Gatunes.directives', [])
 
 			scope.search = function() {
 				$location.path('/search/' + scope.query.replace(/\//g, ' '));
+			};
+
+			scope.add = function() {
+				var extensions = ['mp3', 'ogg', 'flac', 'm4a'];
+				remote.dialog.showOpenDialog({
+					title: i18n.addMusic,
+					properties: [
+						'openFile',
+						'openDirectory',
+						'multiSelections'
+					],
+					filters: [
+						{name: 'Music', extensions: extensions}
+					]
+				}, function(files) {
+					if(!files) return;
+					var process = function() {
+							var file = files.shift();
+							if(!file) return;
+							fs.stat(file.name, function(err, stats) {
+								if(stats.isDirectory()) {
+									fs.readdir(file.name, function(err, directory) {
+										directory.forEach(function(entry, index) {
+											files.push({
+												name: path.join(file.name, entry),
+												index: index
+											});
+										});
+										process();
+									});
+								} else if(extensions.indexOf(path.extname(file.name).substr(1)) === -1) {
+									process();
+								} else {
+									Music.addTrack(fs.createReadStream(file.name), path.basename(file.name), stats.size, null, file.index, path.basename(path.dirname(file.name)), function() {
+										process();
+									});
+								}
+							});
+						};
+
+					files.forEach(function(name, index) {
+						files[index] = {
+							name: name,
+							index: index
+						};
+					});
+					process();
+				});
 			};
 
 			var startPos,

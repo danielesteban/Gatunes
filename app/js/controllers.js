@@ -33,15 +33,19 @@ angular.module('Gatunes.controllers', [])
 		!torrents.length && $location.path('/music');
 	});
 })
-.controller('music', function($scope, $timeout, $window, Music, Player) {
+.controller('music', function($scope, $timeout, $window, Music, Player, Keyboard, Mouse) {
 	$scope.player = Player;
 	$scope.artists = Music.artists;
 	$scope.tracks = Music.tracks;
 	$scope.play = function(track) {
 		Player.play(track);
 	};
-	var debounce;
-	$scope.$on('scroll', function(e, scrollTop) {
+	
+	var scrollTop = $window.localStorage.getItem('Gatunes:MusicScroll') || 0,
+		debounce;
+	
+	$scope.$on('scroll', function(e, value) {
+		scrollTop = value;
 		debounce && $timeout.cancel(debounce);
 		debounce = $timeout(function() {
 			debounce = null;
@@ -49,8 +53,67 @@ angular.module('Gatunes.controllers', [])
 		}, 250);
 	});
 	$timeout(function() {
-		$scope.$emit('setScroll', window.localStorage.getItem('Gatunes:MusicScroll') || 0);
-	}, 0);  
+		$scope.$emit('setScroll', scrollTop);
+	}, 0);
+
+	var artistCache,
+		headerHeight = 50,
+		onKeydown = function(e) {
+			if(e.key !== 16) return;
+			artistCache = [];
+			var artists = $window.document.querySelectorAll('artist'),
+				mouseY = Mouse.pos.y + scrollTop - headerHeight,
+				hover;
+
+			if(!artists.length) return;
+			for(var i=0; i<artists.length; i++) {
+				var rect = artists[i].getBoundingClientRect(),
+					artist = {
+						node: artists[i],
+						offset: rect.top + scrollTop - headerHeight,
+						height: rect.height
+					};
+
+				artistCache.push(artist);
+				artist.offset <= mouseY && (hover = artist);
+			}
+			!hover && (hover = artistCache[0]);
+			
+			$scope.collapsed = true;
+			$scope.$apply();
+			
+			$timeout(function() {
+				var rect = hover.node.getBoundingClientRect();
+				$scope.$emit('setScroll', rect.top + rect.height / 2 + scrollTop - headerHeight - Mouse.pos.y + headerHeight);
+			}, 150);
+		},
+		onKeyup = function(e) {
+			if(e.key !== 16) return;
+			var mouseY = Mouse.pos.y + scrollTop - headerHeight,
+				hover;
+
+			for(var i=0; i<artistCache.length; i++) {
+				var rect = artistCache[i].node.getBoundingClientRect(),
+					offset = rect.top + scrollTop - headerHeight;
+
+				offset <= mouseY && (hover = artistCache[i]);
+			}
+			!hover && (hover = artistCache[0]);
+
+			delete $scope.collapsed;
+			$scope.$apply();
+
+			$timeout(function() {
+				$scope.$emit('setScroll', hover.offset + hover.height / 2 - Mouse.pos.y + headerHeight);
+			}, 0);
+		};
+
+	Keyboard.on('keydown', onKeydown);
+	Keyboard.on('keyup', onKeyup);
+	$scope.$on('$destroy', function() {
+		Keyboard.off('keydown', onKeydown);
+		Keyboard.off('keyup', onKeyup);
+	});		
 })
 .controller('playlist', function($scope, $routeParams, $location, ngDialog, Playlists, Player) {
 	var playlist = Playlists.get($routeParams.id);

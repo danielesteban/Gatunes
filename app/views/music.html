@@ -1,4 +1,4 @@
-<div draggable="tracks">
+<div draggable="tracks" ng-class="{collapsed: collapsed}">
 	<div ng-repeat="artist in artists">
 		<artist class="clearfix">
 			<div class="image">
@@ -7,6 +7,7 @@
 			<div class="info">
 				<h3>
 					<a href="#/artist/{{artist.name}}">{{artist.name}}</a>
+					<span>{{artist.name}}</span>
 				</h3>
 				<p>
 					{{artist.bio}}
