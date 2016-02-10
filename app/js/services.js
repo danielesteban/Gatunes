@@ -13,7 +13,7 @@ angular.module('Gatunes.services', [])
 .factory('Autoupdater', function($http, ngDialog) {
 	//TODO: Replace this with the Electron's built-in AutoUpdater
 	return {
-		currentVersion: '0.0.7',
+		currentVersion: '0.0.8',
 		run: function() {
 
 		}
