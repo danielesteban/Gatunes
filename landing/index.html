@@ -12,16 +12,19 @@
 	</head>
 	<body>
 		<main class="container">
-			<logo></logo>
-			<h1>Free music, No bullshit.</h1>
-			<p>
-				<a href="https://github.com/danielesteban/Gatunes/releases/download/v0.0.9/GatunesWin.zip" class="btn">
-					<i class="fa fa-windows"></i>Download Beta 0.0.9
-				</a>
-				<platform>
-					<span>For 64-bit Windows 7 and above</span> | <a href="#platforms">Other platforms</a>
-				</platform>
-			</p>
+			<background><img src="img/01discover.jpg"></background>
+			<wrapper>
+				<logo></logo>
+				<h1>Free music, No bullshit.</h1>
+				<p>
+					<a href="https://github.com/danielesteban/Gatunes/releases/download/v0.0.9/GatunesWin.zip" class="btn">
+						<i class="fa fa-windows"></i>Download Beta 0.0.9
+					</a>
+					<platform>
+						<span>For 64-bit Windows 7 and above</span> | <a href="#platforms">Other platforms</a>
+					</platform>
+				</p>
+			</wrapper>
 		</main>
 		<warning class="container">
 			<h4>Gatunes downloads Music from torrents</h4>
@@ -75,6 +78,7 @@
 	</body>
 	<script>
 		var main = document.getElementsByTagName('main')[0],
+			background = main.getElementsByTagName('background')[0],
 			mainLink = main.getElementsByTagName('a')[0],
 			mainPlatform = main.getElementsByTagName('platform')[0].getElementsByTagName('span')[0],
 			version = navigator.appVersion,
@@ -88,5 +92,47 @@
 		mainLink.getElementsByTagName('i')[0].className = platforms[platform].getElementsByTagName('i')[0].className;
 
 		mainPlatform.innerHTML = platforms[platform].getElementsByTagName('platform')[0].innerHTML;
+
+		var files = [
+				'01discover',
+				'02artist',
+				'03download',
+				'04quickbrowse',
+				'05music'
+			],
+			images = [],
+			animation = 0,
+			image = 0,
+			start = Math.round(new Date() / 1000),
+			preload = function() {
+				var file = files.shift();
+				if(!file) return setTimeout(animate, Math.max(0, 4000 - (Math.round(new Date() / 1000) - start)));
+				var img = new Image();
+				img.onload = function() {
+					images.push(img);
+					preload();
+				};
+				img.src = 'img/' + file + '.jpg';
+			},
+			timer,
+			animate = function() {
+				var timeout = 1000;
+				switch(animation) {
+					case 0:
+						background.className = 'transition';
+					break;
+					case 1:
+						++image >= images.length && (image = 0);
+						background.firstChild.src = images[image].src;
+						background.className = '';
+						timeout = 4000;
+					break;
+				}
+				++animation >= 2 && (animation = 0);
+				timer && clearTimeout(timer);
+				timer = setTimeout(animate, timeout);
+			};
+
+		preload();
 	</script>
 </html>

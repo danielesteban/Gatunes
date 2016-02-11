@@ -92,10 +92,37 @@ h1, h2, h3, h4, h5 {
 }
 
 main {
-	padding: 60px 0;
+	position: relative;
 	background: #121315;
 	color: #fafafa;
+	text-shadow: 0 0 10px rgba(18, 19, 21, .5);
 	height: 80%;
+	overflow: hidden;
+	background, wrapper {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+	background {
+		position: absolute;
+		z-index: 0;
+		text-align: center;
+		img {
+			height: 100%;
+			-webkit-transition: all ease-in 1s;
+			transition: all ease-in 1s;
+		}
+		&.transition img {
+			filter: blur(100px);
+			-webkit-filter: blur(100px);
+		}
+	}
+	wrapper {
+		position: relative;
+		z-index: 1;
+		padding: 70px 0;
+		background: rgba(18, 19, 21, .5);
+	}
 	h1 {
 		margin: 30px 0 60px;
 		font-size: 500%;
@@ -109,6 +136,9 @@ main {
 	platform a {
 		color: #fafafa;
 	}
+	.btn {
+		box-shadow: 0 0 10px rgba(18, 19, 21, .5);
+	} 
 }
 
 warning {
