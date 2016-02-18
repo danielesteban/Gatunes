@@ -27,6 +27,7 @@ angular.module('Gatunes', [
 	var remote = require('remote'),
 		win = remote.getCurrentWindow();
 
+	require('electron').webFrame.setZoomLevelLimits(1, 1);
 	win.on('close', function() {
 		win.hide();
 		remote.globalShortcut.unregisterAll();
